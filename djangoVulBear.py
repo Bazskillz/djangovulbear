@@ -1,7 +1,10 @@
 from coalib.bears.LocalBear import LocalBear
 
 
-class DjanogoVulBear(LocalBear):
+class DjangoVulBear(LocalBear):
+
+    LANGUAGES = {'Python3'}
+    AUTHORS = {'Securify, Team #11'}
 
     def run(self, filename, file):
         """
