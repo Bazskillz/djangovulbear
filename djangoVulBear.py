@@ -34,3 +34,21 @@ class DjangoVulBear(LocalBear):
                     yield self.new_result(message="Are you using MD5 for as a password hashing function? Please refrain"
                                                   " from using MD5 for password storage, instead use something"
                                                   " like Argon2 or BCrypt", file=filename)
+
+        """
+        Look for missing __init__.py files in directories
+        containing python files.
+        """
+        dirs = {os.path.split(filename)[0]
+                for filename in self.file_dict.keys()
+                if filename.endswith('.py')}
+    
+        missing_inits = {directory for directory in dirs
+                         if not os.path.join(directory, '__init__.py')
+                                in self.file_dict}
+    
+        for missing_init_dir in missing_inits:
+            yield Result(self,
+                         'Directory "{}" does not contain __init__.py file'
+                         .format(os.path.relpath(missing_init_dir,
+                                                 self.get_config_dir())))
