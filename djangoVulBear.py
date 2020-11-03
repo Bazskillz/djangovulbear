@@ -21,7 +21,7 @@ class DjangoVulBear(LocalBear):
             for line in file:
                 if str.lower(line) in debug_misconfigurations:
                     yield self.new_result(message="Are you running this django project in production?"
-                                                  " If so, please disable debug options > " + line, file=filename)
+                                                  " If so, please disable debug options [Current settings] > " + line, file=filename)
             # CookieStorage option in settings.py
             for line in file:
                 if "cookie.CookieStorage" in line:
@@ -34,3 +34,14 @@ class DjangoVulBear(LocalBear):
                     yield self.new_result(message="Are you using MD5 for as a password hashing function? Please refrain"
                                                   " from using MD5 for password storage, instead use something"
                                                   " like Argon2 or BCrypt", file=filename)
+        
+        # Looks at django views.py for security misconfigurations.
+        if "views.py" in filename:
+            for l, line in enumerate(file):
+                # Check for tag
+                if str.lower(line) == "@csrf_exempt\n":
+                    # Get function after csrf tag.
+                    func = file[l+1]
+                    func = func.replace("\n","")
+                    msg = f"Function {func} has a csrf_exempt tag. Make sure this is not exploitable."
+                    yield self.new_result(message=msg, file=filename)
