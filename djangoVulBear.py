@@ -21,7 +21,7 @@ class DjangoVulBear(LocalBear):
             for line in file:
                 if str.lower(line) in debug_misconfigurations:
                     yield self.new_result(message="Are you running this django project in production?"
-                                                  " If so, please disable debug options > " + line, file=filename)
+                                                  " If so, please disable debug options [Current settings] > " + line, file=filename)
             # CookieStorage option in settings.py
             for line in file:
                 if "cookie.CookieStorage" in line:
